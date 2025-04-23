@@ -83,27 +83,32 @@ def afficher_formulaire():
 
 # 🌐 Formulaire HTML (soumission)
 from random import choice
+import random
+
 
 @app.route('/tickets', methods=['POST'])
-@login_required
 def formulaire_ticket():
     titre = request.form.get('titre')
     description = request.form.get('description')
     priorite = request.form.get('priorite')
-    statut = request.form.get('statut')
 
-    # assignation automatique aléatoire à un technicien
-    techniciens = Utilisateur.query.filter_by(role='technicien').all()
-    technicien_assigne = choice(techniciens).id if techniciens else None
+    # ID de l'employé automatiquement : l'utilisateur connecté
+    id_employe = current_user.id
 
+    # Technicien aléatoire
+    techniciens = Utilisateur.query.filter_by(role="technicien").all()
+    id_technicien = random.choice(techniciens).id if techniciens else None
+
+    # Statut par défaut = "ouvert"
     nouveau_ticket = Ticket(
         titre=titre,
         description=description,
         priorite=priorite,
-        statut=statut,
-        id_employe=current_user.id,
-        id_technicien=technicien_assigne
+        statut="ouvert",
+        id_employe=id_employe,
+        id_technicien=id_technicien
     )
+
     db.session.add(nouveau_ticket)
     db.session.commit()
 

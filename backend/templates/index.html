@@ -2,46 +2,21 @@
 {% block content %}
 <h2>Créer un nouveau ticket</h2>
 
-<form method="POST" action="/tickets" class="row g-3">
-    <div class="col-md-6">
-        <label class="form-label">Titre</label>
-        <input type="text" name="titre" class="form-control" required>
-    </div>
-    <div class="col-md-6">
-        <label class="form-label">Statut</label>
-        <select name="statut" class="form-select" required>
-            <option value="ouvert">Ouvert</option>
-            <option value="en cours">En cours</option>
-            <option value="fermé">Fermé</option>
-        </select>
-    </div>
-    <div class="col-12">
-        <label class="form-label">Description</label>
-        <textarea name="description" class="form-control"></textarea>
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">Priorité</label>
-        <select name="priorite" class="form-select">
-            <option value="basse">Basse</option>
-            <option value="moyenne">Moyenne</option>
-            <option value="haute">Haute</option>
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label class="form-label">ID Employé</label>
-        <input type="number" name="id_employe" class="form-control">
-    </div>
-    <div class="col-md-4">
-        <label for="id_technicien">Technicien assigné :</label>
-        <input type="number" name="id_technicien" class="form-control">
-        <select name="id_technicien" id="id_technicien">
-            {% for user in utilisateurs if user.role == 'technicien' %}
-                <option value="{{ user.id }}">{{ user.nom }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-12">
-        <button type="submit" class="btn btn-success">Créer</button>
-    </div>
+<form method="POST" action="/tickets">
+    <label for="titre">Titre :</label>
+    <input type="text" id="titre" name="titre" required>
+
+    <label for="description">Description :</label>
+    <textarea id="description" name="description"></textarea>
+
+    <label for="priorite">Priorité :</label>
+    <select id="priorite" name="priorite">
+        <option value="basse">Basse</option>
+        <option value="moyenne">Moyenne</option>
+        <option value="haute">Haute</option>
+    </select>
+
+    <button type="submit">Créer le ticket</button>
 </form>
+
 {% endblock %}
