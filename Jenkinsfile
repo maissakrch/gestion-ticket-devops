@@ -1,40 +1,23 @@
 pipeline {
     agent any
 
-    environment {
-        PROJECT_NAME = "gestion-ticket-devops"
-    }
-
     stages {
-        stage('Clone Repository') {
+        stage('Pull code') {
             steps {
-                echo '📥 Clonage du dépôt...'
                 git 'https://github.com/maissakrch/gestion-ticket-devops.git'
             }
         }
 
-        stage('Build Docker Images') {
+        stage('Build & Restart Docker') {
             steps {
-                echo '🐳 Construction des images Docker...'
-                sh 'docker compose build'
-            }
-        }
+                script {
+                    // Arrête les anciens conteneurs (si existants)
+                    sh 'docker-compose down'
 
-        stage('Deploy Containers') {
-            steps {
-                echo '🚀 Déploiement des containers...'
-                sh 'docker compose down'
-                sh 'docker compose up -d'
+                    // Reconstruit et relance les conteneurs
+                    sh 'docker-compose up -d --build'
+                }
             }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Déploiement réussi !'
-        }
-        failure {
-            echo '❌ Échec du pipeline Jenkins !'
         }
     }
 }
