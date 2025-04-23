@@ -1,121 +1,46 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Tableau de bord</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            padding: 20px;
-        }
+{% extends "layout.html" %}
+{% block content %}
+<h2>Dashboard</h2>
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
+<!-- Filtres -->
+<form method="get" action="/dashboard" class="mb-4 d-flex gap-2">
+    <select name="statut" class="form-select w-auto">
+        <option value="">-- Statut --</option>
+        <option value="ouvert">Ouvert</option>
+        <option value="en cours">En cours</option>
+        <option value="fermé">Fermé</option>
+    </select>
 
-        h1 {
-            color: #2f80ed;
-        }
+    <select name="priorite" class="form-select w-auto">
+        <option value="">-- Priorité --</option>
+        <option value="basse">Basse</option>
+        <option value="moyenne">Moyenne</option>
+        <option value="haute">Haute</option>
+    </select>
 
-        .logout-button {
-            padding: 8px 15px;
-            background-color: #eb5757;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-        }
+    <button type="submit" class="btn btn-primary">Filtrer</button>
+</form>
 
-        .logout-button:hover {
-            background-color: #c0392b;
-        }
-
-        .filters {
-            margin-bottom: 20px;
-        }
-
-        .filters select {
-            padding: 5px 10px;
-            margin-right: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-        }
-
-        th, td {
-            padding: 12px;
-            border-bottom: 1px solid #ddd;
-            text-align: left;
-        }
-
-        th {
-            background-color: #2f80ed;
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1>🎫 Tableau de bord</h1>
-        <form action="/logout" method="POST">
-            <button type="submit" class="logout-button">Se déconnecter</button>
-        </form>
-    </div>
-
-    <div class="filters">
-        <form method="GET" action="/dashboard">
-            <label for="statut">Filtrer par statut :</label>
-            <select name="statut" id="statut" onchange="this.form.submit()">
-                <option value="">Tous</option>
-                <option value="ouvert">Ouvert</option>
-                <option value="en cours">En cours</option>
-                <option value="fermé">Fermé</option>
-            </select>
-
-            <label for="priorite">Filtrer par priorité :</label>
-            <select name="priorite" id="priorite" onchange="this.form.submit()">
-                <option value="">Toutes</option>
-                <option value="basse">Basse</option>
-                <option value="moyenne">Moyenne</option>
-                <option value="haute">Haute</option>
-            </select>
-        </form>
-    </div>
-
-    {% if tickets %}
-    <table>
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
         <tr>
+            <th>ID</th>
             <th>Titre</th>
-            <th>Description</th>
-            <th>Priorité</th>
             <th>Statut</th>
+            <th>Priorité</th>
             <th>Date</th>
-            <th>Employé</th>
-            <th>Technicien</th>
         </tr>
+    </thead>
+    <tbody>
         {% for ticket in tickets %}
         <tr>
+            <td>{{ ticket.id }}</td>
             <td>{{ ticket.titre }}</td>
-            <td>{{ ticket.description }}</td>
-            <td>{{ ticket.priorite }}</td>
             <td>{{ ticket.statut }}</td>
-            <td>{{ ticket.date_creation.strftime('%d/%m/%Y %H:%M') }}</td>
-            <td>{{ ticket.id_employe }}</td>
-            <td>{{ ticket.id_technicien }}</td>
+            <td>{{ ticket.priorite }}</td>
+            <td>{{ ticket.date_creation.strftime('%Y-%m-%d %H:%M') }}</td>
         </tr>
         {% endfor %}
-    </table>
-    {% else %}
-    <p>Aucun ticket à afficher.</p>
-    {% endif %}
-</body>
-</html>
+    </tbody>
+</table>
+{% endblock %}

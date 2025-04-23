@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestion des utilisateurs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>👥 Gestion des utilisateurs</h1>
+
+    <h2>Ajouter un utilisateur</h2>
+    <form method="POST" action="/admin/users/add">
+        <label for="nom">Nom :</label>
+        <input type="text" name="nom" required>
+
+        <label for="email">Email :</label>
+        <input type="email" name="email" required>
+
+        <label for="mot_de_passe">Mot de passe :</label>
+        <input type="password" name="mot_de_passe" required>
+
+        <label for="role">Rôle :</label>
+        <select name="role" required>
+            <option value="user">Utilisateur</option>
+            <option value="admin">Admin</option>
+        </select>
+
+        <button type="submit">Créer</button>
+    </form>
+
+    <h2>Utilisateurs existants</h2>
+    <table>
+        <tr>
+            <th>ID</th><th>Nom</th><th>Email</th><th>Rôle</th><th>Actions</th>
+        </tr>
+        {% for user in utilisateurs %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role }}</td>
+            <td>
+                <form method="POST" action="/admin/users/delete/{{ user.id }}">
+                    <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?')">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <a href="/dashboard">⬅ Retour</a>
+</body>
+</html>

@@ -1,89 +1,18 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Statistiques</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: #f5f7fa;
-        }
+{% extends "layout.html" %}
+{% block content %}
+<h2>Statistiques des Tickets</h2>
 
-        h1 {
-            color: #2f80ed;
-            margin-bottom: 30px;
-        }
+<h4>Statuts</h4>
+<ul>
+    {% for key, value in data_statut.items() %}
+    <li>{{ key }} : {{ value }}</li>
+    {% endfor %}
+</ul>
 
-        .chart-container {
-            margin-bottom: 50px;
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-
-        canvas {
-            max-width: 700px;
-        }
-    </style>
-</head>
-<body>
-    <h1>📊 Statistiques des tickets</h1>
-
-    <div class="chart-container">
-        <h2>Par statut</h2>
-        <canvas id="statutChart"></canvas>
-    </div>
-
-    <div class="chart-container">
-        <h2>Par priorité</h2>
-        <canvas id="prioriteChart"></canvas>
-    </div>
-
-    <script>
-        const dataStatut = {{ data_statut | tojson }};
-        const dataPriorite = {{ data_priorite | tojson }};
-
-        const statutLabels = Object.keys(dataStatut);
-        const statutValues = Object.values(dataStatut);
-
-        const prioriteLabels = Object.keys(dataPriorite);
-        const prioriteValues = Object.values(dataPriorite);
-
-        const statutChart = new Chart(document.getElementById('statutChart'), {
-            type: 'bar',
-            data: {
-                labels: statutLabels,
-                datasets: [{
-                    label: 'Nombre de tickets',
-                    data: statutValues,
-                    backgroundColor: ['#2f80ed', '#f2994a', '#27ae60'],
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: { beginAtZero: true }
-                }
-            }
-        });
-
-        const prioriteChart = new Chart(document.getElementById('prioriteChart'), {
-            type: 'pie',
-            data: {
-                labels: prioriteLabels,
-                datasets: [{
-                    label: 'Priorité',
-                    data: prioriteValues,
-                    backgroundColor: ['#f1c40f', '#e67e22', '#e74c3c'],
-                }]
-            },
-            options: {
-                responsive: true
-            }
-        });
-    </script>
-</body>
-</html>
+<h4>Priorités</h4>
+<ul>
+    {% for key, value in data_priorite.items() %}
+    <li>{{ key }} : {{ value }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Gestion de Tickets{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('afficher_formulaire') }}">Créer un Ticket</a></li>
+            <li><a href="{{ url_for('stats') }}">Statistiques</a></li>
+            {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <li><a href="{{ url_for('gestion_utilisateurs') }}">Utilisateurs</a></li>
+            {% endif %}
+            <li><a href="{{ url_for('logout') }}">Déconnexion</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>
