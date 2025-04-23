@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Créer un compte</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Créer un compte</h2>
+        <form method="POST" action="/register">
+            <label for="nom">Nom :</label>
+            <input type="text" name="nom" id="nom" required>
+
+            <label for="email">Email :</label>
+            <input type="email" name="email" id="email" required>
+
+            <label for="mot_de_passe">Mot de passe :</label>
+            <input type="password" name="mot_de_passe" id="mot_de_passe" required>
+
+            <label for="role">Rôle :</label>
+            <select name="role" id="role" required>
+                <option value="user">Utilisateur</option>
+                <option value="technicien">Technicien</option>
+            </select>
+
+            <button type="submit">Créer le compte</button>
+        </form>
+
+        <p>Déjà inscrit ? <a href="/login">Se connecter</a></p>
+    </div>
+</body>
+</html>
