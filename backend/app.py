@@ -216,6 +216,25 @@ def ajouter_utilisateur():
 
     return redirect('/admin/users')
 
+@app.route('/admin/users/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_user(id):
+    if current_user.role != 'admin':
+        return "Accès refusé", 403
+
+    user = Utilisateur.query.get(id)
+
+    if request.method == 'POST':
+        user.nom = request.form['nom']
+        user.email = request.form['email']
+        if request.form['mot_de_passe']:
+            user.set_password(request.form['mot_de_passe'])
+        user.role = request.form['role']
+        db.session.commit()
+        return redirect('/admin/users')
+
+    return render_template('edit_user.html', user=user)
+
 
 # 🚀 Lancement
 if __name__ == '__main__':

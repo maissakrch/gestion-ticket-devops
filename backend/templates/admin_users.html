@@ -43,7 +43,12 @@
                 <form method="POST" action="/admin/users/delete/{{ user.id }}">
                     <button type="submit" onclick="return confirm('Supprimer cet utilisateur ?')">Supprimer</button>
                 </form>
+                <form method="GET" action="/admin/users/edit/{{ user.id }}" style="display:inline">
+                    <button type="submit">Modifier</button>
+                </form>
+                
             </td>
+            
         </tr>
         {% endfor %}
     </table>

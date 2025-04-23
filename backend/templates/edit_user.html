@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier un utilisateur</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>✏️ Modifier l'utilisateur</h1>
+
+    <form method="POST">
+        <label for="nom">Nom :</label>
+        <input type="text" name="nom" value="{{ user.nom }}" required>
+
+        <label for="email">Email :</label>
+        <input type="email" name="email" value="{{ user.email }}" required>
+
+        <label for="mot_de_passe">Nouveau mot de passe :</label>
+        <input type="password" name="mot_de_passe">
+
+        <label for="role">Rôle :</label>
+        <select name="role">
+            <option value="user" {% if user.role == 'user' %}selected{% endif %}>Utilisateur</option>
+            <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Admin</option>
+        </select>
+
+        <button type="submit">Mettre à jour</button>
+    </form>
+
+    <a href="/admin/users">⬅ Retour</a>
+</body>
+</html>
