@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard des Tickets</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>Dashboard des tickets</h1>
+
+  {% if tickets %}
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Titre</th>
+          <th>Priorité</th>
+          <th>Statut</th>
+          <th>Employé</th>
+          <th>Technicien</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ticket in tickets %}
+          <tr>
+            <td>{{ ticket.id }}</td>
+            <td>{{ ticket.titre }}</td>
+            <td>{{ ticket.priorite }}</td>
+            <td>{{ ticket.statut }}</td>
+            <td>{{ ticket.id_employe }}</td>
+            <td>{{ ticket.id_technicien }}</td>
+            <td>{{ ticket.date_creation.strftime('%d/%m/%Y %H:%M') }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>Aucun ticket pour le moment.</p>
+  {% endif %}
+</body>
+</html>

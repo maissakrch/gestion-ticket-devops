@@ -5,7 +5,7 @@ from datetime import datetime
 app = Flask(__name__)
 
 # 🔗 Configuration de la base PostgreSQL
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/ticketsdb'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@db:5432/ticketsdb'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -74,6 +74,12 @@ def formulaire_ticket():
     db.session.commit()
 
     return redirect('/formulaire')
+
+@app.route('/dashboard')
+def dashboard():
+    tickets = Ticket.query.all()
+    return render_template('dashboard.html', tickets=tickets)
+
 
 # 🚀 Lancement de l'app
 if __name__ == '__main__':
