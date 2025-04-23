@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Création de Ticket</title>
+</head>
+<body>
+  <h1>Créer un ticket</h1>
+  <form method="post" action="/tickets">
+    <input type="text" name="titre" placeholder="Titre" required><br><br>
+    <textarea name="description" placeholder="Description"></textarea><br><br>
+    <select name="priorite">
+      <option value="faible">Faible</option>
+      <option value="moyenne">Moyenne</option>
+      <option value="haute">Haute</option>
+    </select><br><br>
+    <input type="text" name="statut" placeholder="Statut" required><br><br>
+    <input type="number" name="id_employe" placeholder="ID Employé"><br><br>
+    <input type="number" name="id_technicien" placeholder="ID Technicien"><br><br>
+    <button type="submit">Envoyer</button>
+  </form>
+
+  <h2>Liste des tickets</h2>
+  <ul>
+    {% for ticket in tickets %}
+      <li><strong>{{ ticket.titre }}</strong> - {{ ticket.statut }} ({{ ticket.priorite }})</li>
+    {% endfor %}
+  </ul>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -33,43 +33,47 @@ class Ticket(db.Model):
             "id_technicien": self.id_technicien
         }
 
-# 🏠 Route d'accueil
+# 🏠 Route d'accueil simple
 @app.route('/')
 def home():
     return "Bienvenue Maïssa 🧡 API Flask + PostgreSQL"
 
-# 🔁 Route GET et POST pour /tickets
-@app.route('/tickets', methods=['GET', 'POST'])
-def tickets():
-    if request.method == 'GET':
-        tickets = Ticket.query.all()
-        return jsonify([ticket.to_dict() for ticket in tickets])
+# 🔁 Route JSON : GET/POST depuis Postman ou curl
+@app.route('/tickets', methods=['GET'])
+def get_tickets():
+    tickets = Ticket.query.all()
+    return jsonify([ticket.to_dict() for ticket in tickets])
 
-    elif request.method == 'POST':
-        data = request.get_json()
-        titre = data.get('titre')
-        description = data.get('description')
-        priorite = data.get('priorite')
-        statut = data.get('statut')
-        id_employe = data.get('id_employe')
-        id_technicien = data.get('id_technicien')
+# 🌐 Route formulaire HTML (affichage)
+@app.route('/formulaire', methods=['GET'])
+def afficher_formulaire():
+    tickets = Ticket.query.all()
+    return render_template('index.html', tickets=tickets)
 
-        if not titre or not statut:
-            return jsonify({"error": "Champs manquants"}), 400
+# 🌐 Route formulaire HTML (envoi)
+@app.route('/tickets', methods=['POST'])
+def formulaire_ticket():
+    # Récupération via formulaire HTML (donc via request.form)
+    titre = request.form.get('titre')
+    description = request.form.get('description')
+    priorite = request.form.get('priorite')
+    statut = request.form.get('statut')
+    id_employe = request.form.get('id_employe')
+    id_technicien = request.form.get('id_technicien')
 
-        nouveau_ticket = Ticket(
-            titre=titre,
-            description=description,
-            priorite=priorite,
-            statut=statut,
-            id_employe=id_employe,
-            id_technicien=id_technicien
-        )
+    nouveau_ticket = Ticket(
+        titre=titre,
+        description=description,
+        priorite=priorite,
+        statut=statut,
+        id_employe=id_employe,
+        id_technicien=id_technicien
+    )
 
-        db.session.add(nouveau_ticket)
-        db.session.commit()
+    db.session.add(nouveau_ticket)
+    db.session.commit()
 
-        return jsonify(nouveau_ticket.to_dict()), 201
+    return redirect('/formulaire')
 
 # 🚀 Lancement de l'app
 if __name__ == '__main__':
