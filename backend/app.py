@@ -294,6 +294,20 @@ def edit_ticket(id):
 
     return render_template('edit_ticket.html', ticket=ticket, techniciens=techniciens)
 
+@app.route('/profil', methods=['GET', 'POST'])
+@login_required
+def profil():
+    if request.method == 'POST':
+        current_user.nom = request.form['nom']
+        current_user.email = request.form['email']
+        nouveau_mdp = request.form['mot_de_passe']
+        if nouveau_mdp:
+            current_user.set_password(nouveau_mdp)
+        db.session.commit()
+        return redirect('/dashboard')
+    
+    return render_template('profil.html', user=current_user)
+
 
 # 🚀 Lancement
 if __name__ == '__main__':

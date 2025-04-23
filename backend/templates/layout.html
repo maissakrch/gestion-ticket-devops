@@ -9,6 +9,7 @@
     <nav>
         <ul>
             <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('profil')}}">Mon Profil</a></li>
             <li><a href="{{ url_for('afficher_formulaire') }}">Créer un Ticket</a></li>
 
             {% if current_user.is_authenticated and current_user.role == 'technicien' %}
