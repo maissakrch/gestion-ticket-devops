@@ -1,42 +1,116 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard des Tickets</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>🎫 Dashboard des Tickets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-bottom: 1rem;
+        }
+
+        select, button {
+            padding: 0.5rem;
+            margin-right: 0.5rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .btn-delete {
+            color: red;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-  <h1>Dashboard des tickets</h1>
+    <h1>🎫 Dashboard des Tickets</h1>
 
-  {% if tickets %}
+    <!-- 🎛️ Filtres -->
+    <form method="GET" action="/dashboard">
+        <label for="statut">Filtrer par statut:</label>
+        <select name="statut" id="statut">
+            <option value="">Tous</option>
+            <option value="ouvert">Ouvert</option>
+            <option value="en cours">En cours</option>
+            <option value="fermé">Fermé</option>
+        </select>
+
+        <label for="priorite">Filtrer par priorité:</label>
+        <select name="priorite" id="priorite">
+            <option value="">Toutes</option>
+            <option value="basse">Basse</option>
+            <option value="moyenne">Moyenne</option>
+            <option value="haute">Haute</option>
+        </select>
+
+        <button type="submit">Filtrer</button>
+    </form>
+
+    <a href="/export" class="btn btn-success mb-3">📥 Exporter CSV</a>
+
+    <!-- 📋 Tableau -->
     <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Titre</th>
-          <th>Priorité</th>
-          <th>Statut</th>
-          <th>Employé</th>
-          <th>Technicien</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for ticket in tickets %}
-          <tr>
-            <td>{{ ticket.id }}</td>
-            <td>{{ ticket.titre }}</td>
-            <td>{{ ticket.priorite }}</td>
-            <td>{{ ticket.statut }}</td>
-            <td>{{ ticket.id_employe }}</td>
-            <td>{{ ticket.id_technicien }}</td>
-            <td>{{ ticket.date_creation.strftime('%d/%m/%Y %H:%M') }}</td>
-          </tr>
-        {% endfor %}
-      </tbody>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Description</th>
+                <th>Priorité</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Employé</th>
+                <th>Technicien</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ ticket.id }}</td>
+                <td>{{ ticket.titre }}</td>
+                <td>{{ ticket.description }}</td>
+                <td>{{ ticket.priorite }}</td>
+                <td>{{ ticket.statut }}</td>
+                <td>{{ ticket.date_creation.strftime('%Y-%m-%d %H:%M') }}</td>
+                <td>{{ ticket.id_employe }}</td>
+                <td>{{ ticket.id_technicien }}</td>
+                <td>
+                    <form action="/delete/{{ ticket.id }}" method="POST" onsubmit="return confirm('Supprimer ce ticket ?');">
+                        <button type="submit" class="btn-delete">🗑 Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-  {% else %}
-    <p>Aucun ticket pour le moment.</p>
-  {% endif %}
 </body>
 </html>

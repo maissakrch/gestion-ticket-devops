@@ -38,22 +38,21 @@ class Ticket(db.Model):
 def home():
     return "Bienvenue Maïssa 🧡 API Flask + PostgreSQL"
 
-# 🔁 Route JSON : GET/POST depuis Postman ou curl
+# 🔁 Route JSON : GET tous les tickets
 @app.route('/tickets', methods=['GET'])
 def get_tickets():
     tickets = Ticket.query.all()
     return jsonify([ticket.to_dict() for ticket in tickets])
 
-# 🌐 Route formulaire HTML (affichage)
+# 🌐 Formulaire HTML (affichage)
 @app.route('/formulaire', methods=['GET'])
 def afficher_formulaire():
     tickets = Ticket.query.all()
     return render_template('index.html', tickets=tickets)
 
-# 🌐 Route formulaire HTML (envoi)
+# 🌐 Formulaire HTML (soumission)
 @app.route('/tickets', methods=['POST'])
 def formulaire_ticket():
-    # Récupération via formulaire HTML (donc via request.form)
     titre = request.form.get('titre')
     description = request.form.get('description')
     priorite = request.form.get('priorite')
@@ -69,21 +68,39 @@ def formulaire_ticket():
         id_employe=id_employe,
         id_technicien=id_technicien
     )
-
     db.session.add(nouveau_ticket)
     db.session.commit()
 
     return redirect('/formulaire')
 
+@app.route('/delete/<int:ticket_id>', methods=['POST'])
+def supprimer_ticket(ticket_id):
+    ticket = Ticket.query.get(ticket_id)
+    if ticket:
+        db.session.delete(ticket)
+        db.session.commit()
+    return redirect('/dashboard')
+
+
+# 📊 Dashboard avec filtres
 @app.route('/dashboard')
 def dashboard():
-    tickets = Ticket.query.all()
+    statut = request.args.get('statut')
+    priorite = request.args.get('priorite')
+
+    query = Ticket.query
+    if statut:
+        query = query.filter_by(statut=statut)
+    if priorite:
+        query = query.filter_by(priorite=priorite)
+
+    tickets = query.all()
     return render_template('dashboard.html', tickets=tickets)
 
+# 📈 Statistiques
 @app.route('/stats')
 def stats():
     from collections import Counter
-
     tickets = Ticket.query.all()
     statuts = Counter([ticket.statut for ticket in tickets])
     priorites = Counter([ticket.priorite for ticket in tickets if ticket.priorite])
@@ -93,8 +110,37 @@ def stats():
         data_priorite=priorites
     )
 
+import csv
+from io import StringIO
+from flask import Response
+
+@app.route('/export')
+def export_csv():
+    tickets = Ticket.query.all()
+
+    # Création CSV en mémoire
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['ID', 'Titre', 'Description', 'Priorité', 'Statut', 'Date création', 'Employé', 'Technicien'])
+
+    for ticket in tickets:
+        writer.writerow([
+            ticket.id,
+            ticket.titre,
+            ticket.description,
+            ticket.priorite,
+            ticket.statut,
+            ticket.date_creation.strftime("%Y-%m-%d %H:%M:%S"),
+            ticket.id_employe,
+            ticket.id_technicien
+        ])
+
+    output.seek(0)
+
+    return Response(output, mimetype='text/csv',
+                    headers={"Content-Disposition": "attachment;filename=tickets.csv"})
 
 
-# 🚀 Lancement de l'app
+# 🚀 Lancement
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5050)
