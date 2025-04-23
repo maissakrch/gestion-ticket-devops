@@ -16,9 +16,9 @@
                 <li><a href="{{ url_for('tickets_technicien') }}">🛠️ Mes Tickets</a></li>
             {% endif %}
 
-            <li><a href="{{ url_for('stats') }}">Statistiques</a></li>
-
             {% if current_user.is_authenticated and current_user.role == 'admin' %}
+                <li><a href="{{ url_for('stats') }}">Statistiques</a></li>
+
                 <li><a href="{{ url_for('gestion_utilisateurs') }}">Utilisateurs</a></li>
             {% endif %}
 

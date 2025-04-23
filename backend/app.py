@@ -122,7 +122,16 @@ def dashboard():
     statut = request.args.get('statut')
     priorite = request.args.get('priorite')
 
-    query = Ticket.query
+    # 👑 Admin : voit tout
+    if current_user.role == 'admin':
+        query = Ticket.query
+    # 👤 Utilisateur simple : voit ses propres tickets
+    elif current_user.role == 'user':
+        query = Ticket.query.filter_by(id_employe=current_user.id)
+    # 🛠 Technicien : voit ses tickets dans une autre route dédiée
+    else:
+        return redirect('/technicien/tickets')
+
     if statut:
         query = query.filter_by(statut=statut)
     if priorite:
@@ -131,18 +140,41 @@ def dashboard():
     tickets = query.all()
     return render_template('dashboard.html', tickets=tickets)
 
+
 # 📈 Statistiques (protégé)
 @app.route('/stats')
 @login_required
 def stats():
-    from collections import Counter
-    tickets = Ticket.query.all()
-    statuts = Counter([ticket.statut for ticket in tickets])
-    priorites = Counter([ticket.priorite for ticket in tickets if ticket.priorite])
+    from collections import Counter, defaultdict
+    from datetime import datetime
 
-    return render_template('stats.html',
+    tickets = Ticket.query.all()
+
+    # Nombre de tickets par statut
+    statuts = Counter(ticket.statut for ticket in tickets)
+
+    # Nombre de tickets critiques
+    priorites = Counter(ticket.priorite for ticket in tickets if ticket.priorite)
+
+    # Temps moyen de résolution par technicien
+    technicien_durations = defaultdict(list)
+    for ticket in tickets:
+        if ticket.statut == "fermé" and ticket.id_technicien:
+            # Simulation : résolution = date_creation + 2 jours (ou autre logique)
+            resolution_date = ticket.date_creation  # Remplacer par ticket.date_resolution si dispo
+            duration = (datetime.utcnow() - ticket.date_creation).total_seconds() / 3600  # en heures
+            technicien_durations[ticket.id_technicien].append(duration)
+
+    technicien_moyennes = {
+        Utilisateur.query.get(tid).nom: round(sum(durations)/len(durations), 2)
+        for tid, durations in technicien_durations.items()
+        if durations
+    }
+
+    return render_template("stats.html",
         data_statut=statuts,
-        data_priorite=priorites
+        data_priorite=priorites,
+        moyennes_par_technicien=technicien_moyennes
     )
 
 # 🔐 Page de login

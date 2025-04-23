@@ -1,18 +1,71 @@
-{% extends "layout.html" %}
-{% block content %}
-<h2>Statistiques des Tickets</h2>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Statistiques</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📈 Statistiques des tickets</h1>
 
-<h4>Statuts</h4>
-<ul>
-    {% for key, value in data_statut.items() %}
-    <li>{{ key }} : {{ value }}</li>
-    {% endfor %}
-</ul>
+        <!-- 📊 Diagramme des statuts -->
+        <h2>Tickets par statut</h2>
+        <canvas id="chartStatut"></canvas>
 
-<h4>Priorités</h4>
-<ul>
-    {% for key, value in data_priorite.items() %}
-    <li>{{ key }} : {{ value }}</li>
-    {% endfor %}
-</ul>
-{% endblock %}
+        <!-- 📶 Diagramme des priorités -->
+        <h2>Tickets par priorité</h2>
+        <canvas id="chartPriorite"></canvas>
+
+        <!-- ⏱️ Temps moyen par technicien -->
+        <h2>Temps moyen de résolution par technicien (heures)</h2>
+        {% if moyennes_par_technicien %}
+            <table border="1">
+                <tr>
+                    <th>Technicien</th>
+                    <th>Temps moyen</th>
+                </tr>
+                {% for nom, moyenne in moyennes_par_technicien.items() %}
+                <tr>
+                    <td>{{ nom }}</td>
+                    <td>{{ moyenne }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>Aucune donnée disponible pour le moment.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        const statutData = {
+            labels: {{ data_statut.keys()|list|tojson }},
+            datasets: [{
+                label: 'Statuts',
+                data: {{ data_statut.values()|list|tojson }},
+                backgroundColor: ['#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0']
+            }]
+        };
+
+        const prioriteData = {
+            labels: {{ data_priorite.keys()|list|tojson }},
+            datasets: [{
+                label: 'Priorités',
+                data: {{ data_priorite.values()|list|tojson }},
+                backgroundColor: ['#E74C3C', '#F1C40F', '#2ECC71']
+            }]
+        };
+
+        new Chart(document.getElementById('chartStatut'), {
+            type: 'pie',
+            data: statutData
+        });
+
+        new Chart(document.getElementById('chartPriorite'), {
+            type: 'bar',
+            data: prioriteData
+        });
+    </script>
+</body>
+</html>
