@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Statistiques</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <h1>📊 Statistiques des tickets</h1>
+
+  <canvas id="statutChart" width="400" height="200"></canvas>
+  <canvas id="prioriteChart" width="400" height="200"></canvas>
+
+  <script>
+    const dataStatut = {{ data_statut | safe }};
+    const dataPriorite = {{ data_priorite | safe }};
+
+    new Chart(document.getElementById("statutChart"), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(dataStatut),
+        datasets: [{
+          label: "Par statut",
+          data: Object.values(dataStatut),
+          backgroundColor: ['#f39c12', '#2ecc71', '#e74c3c', '#3498db']
+        }]
+      }
+    });
+
+    new Chart(document.getElementById("prioriteChart"), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(dataPriorite),
+        datasets: [{
+          label: "Par priorité",
+          data: Object.values(dataPriorite),
+          backgroundColor: '#9b59b6'
+        }]
+      }
+    });
+  </script>
+</body>
+</html>

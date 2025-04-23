@@ -80,6 +80,20 @@ def dashboard():
     tickets = Ticket.query.all()
     return render_template('dashboard.html', tickets=tickets)
 
+@app.route('/stats')
+def stats():
+    from collections import Counter
+
+    tickets = Ticket.query.all()
+    statuts = Counter([ticket.statut for ticket in tickets])
+    priorites = Counter([ticket.priorite for ticket in tickets if ticket.priorite])
+
+    return render_template('stats.html',
+        data_statut=statuts,
+        data_priorite=priorites
+    )
+
+
 
 # 🚀 Lancement de l'app
 if __name__ == '__main__':
