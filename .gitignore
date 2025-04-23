@@ -1,0 +1,14 @@
+# Virtual env
+venv/
+
+# Python cache
+__pycache__/
+
+# Environnement macOS
+.DS_Store
+
+# Base de données Docker (volume)
+pgdata/
+
+# Fichiers logs
+*.log
