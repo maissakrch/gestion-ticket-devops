@@ -176,7 +176,7 @@ def stats():
         data_priorite=priorites,
         moyennes_par_technicien=technicien_moyennes
     )
-
+# test
 # 🔐 Page de login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
