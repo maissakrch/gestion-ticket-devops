@@ -123,14 +123,13 @@ def dashboard():
     priorite = request.args.get('priorite')
 
     # 👑 Admin : voit tout
-    if current_user.role == 'admin':
+    if current_user.role == 'admin' or current_user.role =="technicien":
         query = Ticket.query
     # 👤 Utilisateur simple : voit ses propres tickets
     elif current_user.role == 'user':
         query = Ticket.query.filter_by(id_employe=current_user.id)
     # 🛠 Technicien : voit ses tickets dans une autre route dédiée
-    else:
-        return redirect('/technicien/tickets')
+    
 
     if statut:
         query = query.filter_by(statut=statut)
@@ -176,7 +175,6 @@ def stats():
         data_priorite=priorites,
         moyennes_par_technicien=technicien_moyennes
     )
-# test09
 # 🔐 Page de login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -189,6 +187,8 @@ def login():
             login_user(user)
             print("✅ Connexion réussie")
             return redirect('/dashboard')
+        
+        
 
         print("❌ Identifiants invalides")
         return "Identifiants invalides"
