@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -13,13 +14,23 @@ db = SQLAlchemy(app)
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     titre = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    priorite = db.Column(db.String(20), nullable=True)
     statut = db.Column(db.String(20), nullable=False)
+    date_creation = db.Column(db.DateTime, default=datetime.utcnow)
+    id_employe = db.Column(db.Integer, nullable=True)
+    id_technicien = db.Column(db.Integer, nullable=True)
 
     def to_dict(self):
         return {
             "id": self.id,
             "titre": self.titre,
-            "statut": self.statut
+            "description": self.description,
+            "priorite": self.priorite,
+            "statut": self.statut,
+            "date_creation": self.date_creation.isoformat(),
+            "id_employe": self.id_employe,
+            "id_technicien": self.id_technicien
         }
 
 # 🏠 Route d'accueil
@@ -37,12 +48,24 @@ def tickets():
     elif request.method == 'POST':
         data = request.get_json()
         titre = data.get('titre')
+        description = data.get('description')
+        priorite = data.get('priorite')
         statut = data.get('statut')
+        id_employe = data.get('id_employe')
+        id_technicien = data.get('id_technicien')
 
         if not titre or not statut:
             return jsonify({"error": "Champs manquants"}), 400
 
-        nouveau_ticket = Ticket(titre=titre, statut=statut)
+        nouveau_ticket = Ticket(
+            titre=titre,
+            description=description,
+            priorite=priorite,
+            statut=statut,
+            id_employe=id_employe,
+            id_technicien=id_technicien
+        )
+
         db.session.add(nouveau_ticket)
         db.session.commit()
 
