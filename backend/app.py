@@ -82,27 +82,33 @@ def afficher_formulaire():
 
 
 # 🌐 Formulaire HTML (soumission)
+from random import choice
+
 @app.route('/tickets', methods=['POST'])
+@login_required
 def formulaire_ticket():
     titre = request.form.get('titre')
     description = request.form.get('description')
     priorite = request.form.get('priorite')
     statut = request.form.get('statut')
-    id_employe = request.form.get('id_employe')
-    id_technicien = request.form.get('id_technicien')
+
+    # assignation automatique aléatoire à un technicien
+    techniciens = Utilisateur.query.filter_by(role='technicien').all()
+    technicien_assigne = choice(techniciens).id if techniciens else None
 
     nouveau_ticket = Ticket(
         titre=titre,
         description=description,
         priorite=priorite,
         statut=statut,
-        id_employe=id_employe,
-        id_technicien=id_technicien
+        id_employe=current_user.id,
+        id_technicien=technicien_assigne
     )
     db.session.add(nouveau_ticket)
     db.session.commit()
 
     return redirect('/formulaire')
+
 
 # 📊 Dashboard avec filtres (protégé)
 @app.route('/dashboard')
@@ -261,6 +267,26 @@ def maj_ticket(id):
     ticket.statut = request.form.get('statut')
     db.session.commit()
     return redirect('/technicien/tickets')
+
+@app.route('/admin/tickets/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_ticket(id):
+    if current_user.role != 'admin':
+        return "Accès refusé", 403
+
+    ticket = Ticket.query.get(id)
+    techniciens = Utilisateur.query.filter_by(role='technicien').all()
+
+    if request.method == 'POST':
+        ticket.titre = request.form.get('titre')
+        ticket.description = request.form.get('description')
+        ticket.priorite = request.form.get('priorite')
+        ticket.statut = request.form.get('statut')
+        ticket.id_technicien = int(request.form.get('id_technicien'))
+        db.session.commit()
+        return redirect('/dashboard')
+
+    return render_template('edit_ticket.html', ticket=ticket, techniciens=techniciens)
 
 
 # 🚀 Lancement

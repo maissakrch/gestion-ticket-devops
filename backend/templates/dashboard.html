@@ -39,6 +39,13 @@
             <td>{{ ticket.statut }}</td>
             <td>{{ ticket.priorite }}</td>
             <td>{{ ticket.date_creation.strftime('%Y-%m-%d %H:%M') }}</td>
+            {% if current_user.role == 'admin' %}
+            <td>
+            <form action="/admin/tickets/edit/{{ ticket.id }}" method="get" style="display:inline;">
+                <button type="submit">Modifier</button>
+            </form>
+            </td>
+            {% endif %}
         </tr>
         {% endfor %}
     </tbody>

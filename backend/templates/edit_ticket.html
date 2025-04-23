@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier Ticket</title>
+</head>
+<body>
+    <h2>Modifier le ticket</h2>
+    <form method="POST">
+        <label>Titre :</label>
+        <input type="text" name="titre" value="{{ ticket.titre }}" required><br>
+
+        <label>Description :</label>
+        <textarea name="description">{{ ticket.description }}</textarea><br>
+
+        <label>Priorité :</label>
+        <select name="priorite">
+            <option value="basse" {% if ticket.priorite == 'basse' %}selected{% endif %}>Basse</option>
+            <option value="moyenne" {% if ticket.priorite == 'moyenne' %}selected{% endif %}>Moyenne</option>
+            <option value="haute" {% if ticket.priorite == 'haute' %}selected{% endif %}>Haute</option>
+        </select><br>
+
+        <label>Statut :</label>
+        <select name="statut">
+            <option value="ouvert" {% if ticket.statut == 'ouvert' %}selected{% endif %}>Ouvert</option>
+            <option value="en cours" {% if ticket.statut == 'en cours' %}selected{% endif %}>En cours</option>
+            <option value="fermé" {% if ticket.statut == 'fermé' %}selected{% endif %}>Fermé</option>
+        </select><br>
+
+        <label>Technicien assigné :</label>
+        <select name="id_technicien">
+            {% for tech in techniciens %}
+                <option value="{{ tech.id }}" {% if tech.id == ticket.id_technicien %}selected{% endif %}>
+                    {{ tech.nom }}
+                </option>
+            {% endfor %}
+        </select><br>
+
+        <button type="submit">Enregistrer</button>
+    </form>
+</body>
+</html>
