@@ -32,8 +32,13 @@
         <input type="number" name="id_employe" class="form-control">
     </div>
     <div class="col-md-4">
-        <label class="form-label">ID Technicien</label>
+        <label for="id_technicien">Technicien assigné :</label>
         <input type="number" name="id_technicien" class="form-control">
+        <select name="id_technicien" id="id_technicien">
+            {% for user in utilisateurs if user.role == 'technicien' %}
+                <option value="{{ user.id }}">{{ user.nom }}</option>
+            {% endfor %}
+        </select>
     </div>
     <div class="col-12">
         <button type="submit" class="btn btn-success">Créer</button>

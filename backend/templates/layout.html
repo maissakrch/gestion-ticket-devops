@@ -10,6 +10,9 @@
         <ul>
             <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
             <li><a href="{{ url_for('afficher_formulaire') }}">Créer un Ticket</a></li>
+            <li>{% if current_user.is_authenticated and current_user.role == 'technicien' %}
+                <a href="{{ url_for('tickets_technicien') }}">🛠️ Mes Tickets</a>
+                {% endif %}</li>
             <li><a href="{{ url_for('stats') }}">Statistiques</a></li>
             {% if current_user.is_authenticated and current_user.role == 'admin' %}
                 <li><a href="{{ url_for('gestion_utilisateurs') }}">Utilisateurs</a></li>

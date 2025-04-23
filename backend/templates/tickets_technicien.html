@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tickets assignés</title>
+</head>
+<body>
+    <h2>Mes tickets assignés</h2>
+    {% for ticket in tickets %}
+        <div style="border: 1px solid black; padding: 10px; margin: 10px;">
+            <p><strong>Titre :</strong> {{ ticket.titre }}</p>
+            <p><strong>Description :</strong> {{ ticket.description }}</p>
+            <p><strong>Statut :</strong> {{ ticket.statut }}</p>
+            <form action="/technicien/tickets/{{ ticket.id }}/update" method="POST">
+                <textarea name="description" placeholder="Mise à jour de l'action">{{ ticket.description }}</textarea><br>
+                <select name="statut">
+                    <option value="ouvert" {% if ticket.statut == 'ouvert' %}selected{% endif %}>Ouvert</option>
+                    <option value="fermé" {% if ticket.statut == 'fermé' %}selected{% endif %}>Fermé</option>
+                </select><br>
+                <button type="submit">Mettre à jour</button>
+            </form>
+        </div>
+    {% endfor %}
+</body>
+</html>

@@ -26,7 +26,7 @@ class Utilisateur(db.Model, UserMixin):
     nom = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     mot_de_passe = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(10), nullable=False)  # 'admin' ou 'user'
+    role = db.Column(db.String(20), nullable=False)  # admin, user, technicien
 
     def set_password(self, mot_de_passe_clair):
         self.mot_de_passe = generate_password_hash(mot_de_passe_clair)
@@ -73,10 +73,13 @@ def get_tickets():
     return jsonify([ticket.to_dict() for ticket in tickets])
 
 # 🌐 Formulaire HTML (affichage)
-@app.route('/formulaire', methods=['GET'])
+@app.route('/formulaire')
+@login_required
 def afficher_formulaire():
+    utilisateurs = Utilisateur.query.all()
     tickets = Ticket.query.all()
-    return render_template('index.html', tickets=tickets)
+    return render_template('index.html', tickets=tickets, utilisateurs=utilisateurs)
+
 
 # 🌐 Formulaire HTML (soumission)
 @app.route('/tickets', methods=['POST'])
@@ -234,6 +237,30 @@ def edit_user(id):
         return redirect('/admin/users')
 
     return render_template('edit_user.html', user=user)
+
+@app.route('/technicien/tickets')
+@login_required
+def tickets_technicien():
+    if current_user.role != 'technicien':
+        return "Accès réservé aux techniciens", 403
+
+    tickets = Ticket.query.filter_by(id_technicien=current_user.id).all()
+    return render_template('tickets_technicien.html', tickets=tickets)
+
+@app.route('/technicien/tickets/<int:id>/update', methods=['POST'])
+@login_required
+def maj_ticket(id):
+    if current_user.role != 'technicien':
+        return "Accès refusé", 403
+
+    ticket = Ticket.query.get(id)
+    if ticket.id_technicien != current_user.id:
+        return "Ce ticket ne vous est pas assigné.", 403
+
+    ticket.description = request.form.get('description')
+    ticket.statut = request.form.get('statut')
+    db.session.commit()
+    return redirect('/technicien/tickets')
 
 
 # 🚀 Lancement
