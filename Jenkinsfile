@@ -2,52 +2,39 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "gestion-ticket-app"
+        PROJECT_NAME = "gestion-ticket-devops"
     }
 
     stages {
-        stage('Clone du repo') {
+        stage('Clone Repository') {
             steps {
-                echo '🔄 Clonage du projet depuis GitHub...'
-                // Jenkins le fait automatiquement
+                echo '📥 Clonage du dépôt...'
+                git 'https://github.com/maissakrch/gestion-ticket-devops.git'
             }
         }
 
-        stage('Installation des dépendances') {
+        stage('Build Docker Images') {
             steps {
-                echo '📦 Installation des requirements'
-                sh 'pip install -r backend/requirements.txt'
+                echo '🐳 Construction des images Docker...'
+                sh 'docker compose build'
             }
         }
 
-        stage('Tests') {
+        stage('Deploy Containers') {
             steps {
-                echo '🧪 Lancement des tests (optionnel si tu en as)'
-                // Tu peux ignorer ou ajouter des tests si tu en as
-            }
-        }
-
-        stage('Docker Build') {
-            steps {
-                echo '🐳 Construction de l’image Docker'
-                sh 'docker build -t $DOCKER_IMAGE backend'
-            }
-        }
-
-        stage('Docker Run') {
-            steps {
-                echo '🚀 Démarrage du conteneur Docker'
-                sh 'docker run -d -p 5050:5050 $DOCKER_IMAGE'
+                echo '🚀 Déploiement des containers...'
+                sh 'docker compose down'
+                sh 'docker compose up -d'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build terminé avec succès !'
+            echo '✅ Déploiement réussi !'
         }
         failure {
-            echo '❌ Build échoué.'
+            echo '❌ Échec du pipeline Jenkins !'
         }
     }
 }
